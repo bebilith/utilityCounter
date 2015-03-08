@@ -1,0 +1,6 @@
+#Mailing
+mailUser=bot@spam.com
+mailPassword=secret
+mailHost=smtp.googlemail.com
+mailPort=465
+mailTo=yourmail@goeshere.com
