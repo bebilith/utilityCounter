@@ -35,7 +35,7 @@
       <bpmn2:outgoing>SequenceFlow_6</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="SequenceFlow_3" sourceRef="FetchPictureActivity" targetRef="MailPictureActivty"/>
-    <bpmn2:userTask id="ProcessPictureTask" name="Process&#xA;Picture">
+    <bpmn2:userTask id="ProcessPictureTask" camunda:assignee="till" name="Process&#xA;Picture">
       <bpmn2:incoming>SequenceFlow_6</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
     </bpmn2:userTask>
