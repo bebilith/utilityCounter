@@ -1,41 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://activiti.org/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="_kcK8MMUOEeS69vYexcR4EQ" exporter="camunda modeler" exporterVersion="2.6.0" targetNamespace="http://activiti.org/bpmn">
   <bpmn2:collaboration id="_Collaboration_2" name="Start">
-    <bpmn2:participant id="_Participant_2" name="Utility Counter Process" processRef="Process_1"/>
+    <bpmn2:participant id="_Participant_2" name="Utility Counter Process" processRef="utility-counter"/>
   </bpmn2:collaboration>
-  <bpmn2:process id="Process_1" isExecutable="true">
+  <bpmn2:process id="utility-counter" name="Utility Counter" isExecutable="true">
     <bpmn2:laneSet id="LaneSet_1" name="Lane Set 1">
       <bpmn2:lane id="Lane_1" name="Server">
         <bpmn2:flowNodeRef>StartEvent_1</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>TriggerCameraActivity</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>FetchPictureActivity</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>MailPictureActivty</bpmn2:flowNodeRef>
-        <bpmn2:flowNodeRef>EndEvent_1</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>ProcessPictureTask</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>EndEvent_2</bpmn2:flowNodeRef>
       </bpmn2:lane>
     </bpmn2:laneSet>
-    <bpmn2:startEvent id="StartEvent_1">
+    <bpmn2:startEvent id="StartEvent_1" camunda:initiator="System" name="Start ">
       <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
-      <bpmn2:timerEventDefinition id="_TimerEventDefinition_2"/>
+      <bpmn2:timerEventDefinition id="_TimerEventDefinition_2">
+        <bpmn2:timeCycle xsi:type="bpmn2:tFormalExpression">R/PT05M</bpmn2:timeCycle>
+      </bpmn2:timerEventDefinition>
     </bpmn2:startEvent>
     <bpmn2:serviceTask id="TriggerCameraActivity" camunda:class="com.warrensofthought.utilityCounter.delegates.TriggerCameraDelegate" name="Trigger&#xA;Camera">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1" name="" sourceRef="StartEvent_1" targetRef="TriggerCameraActivity"/>
-    <bpmn2:serviceTask id="FetchPictureActivity" name="Fetch&#xA;Picture">
+    <bpmn2:serviceTask id="FetchPictureActivity" camunda:class="com.warrensofthought.utilityCounter.delegates.FetchPictureDelegate" name="Fetch&#xA;Picture">
       <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="TriggerCameraActivity" targetRef="FetchPictureActivity"/>
-    <bpmn2:serviceTask id="MailPictureActivty" name="Mail&#xA;Picture">
+    <bpmn2:serviceTask id="MailPictureActivty" camunda:class="com.warrensofthought.utilityCounter.delegates.MailPictureDelegate" name="Mail&#xA;Picture">
       <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_6</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="SequenceFlow_3" sourceRef="FetchPictureActivity" targetRef="MailPictureActivty"/>
-    <bpmn2:endEvent id="EndEvent_1">
-      <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
+    <bpmn2:userTask id="ProcessPictureTask" name="Process&#xA;Picture">
+      <bpmn2:incoming>SequenceFlow_6</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_6" name="" sourceRef="MailPictureActivty" targetRef="ProcessPictureTask"/>
+    <bpmn2:endEvent id="EndEvent_2">
+      <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
     </bpmn2:endEvent>
-    <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="MailPictureActivty" targetRef="EndEvent_1"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_7" name="" sourceRef="ProcessPictureTask" targetRef="EndEvent_2"/>
   </bpmn2:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="_Collaboration_2">
@@ -69,12 +77,19 @@
         <di:waypoint xsi:type="dc:Point" x="588.0" y="282.0"/>
         <di:waypoint xsi:type="dc:Point" x="638.0" y="282.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_2" bpmnElement="EndEvent_1">
-        <dc:Bounds height="36.0" width="36.0" x="788.0" y="264.0"/>
+      <bpmndi:BPMNShape id="_BPMNShape_UserTask_3" bpmnElement="ProcessPictureTask">
+        <dc:Bounds height="80.0" width="100.0" x="788.0" y="242.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="SequenceFlow_4" sourceElement="_BPMNShape_ServiceTask_10" targetElement="_BPMNShape_EndEvent_2">
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_6" bpmnElement="SequenceFlow_6" sourceElement="_BPMNShape_ServiceTask_10" targetElement="_BPMNShape_UserTask_3">
         <di:waypoint xsi:type="dc:Point" x="738.0" y="282.0"/>
         <di:waypoint xsi:type="dc:Point" x="788.0" y="282.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_3" bpmnElement="EndEvent_2">
+        <dc:Bounds height="36.0" width="36.0" x="938.0" y="264.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_7" bpmnElement="SequenceFlow_7" sourceElement="_BPMNShape_UserTask_3" targetElement="_BPMNShape_EndEvent_3">
+        <di:waypoint xsi:type="dc:Point" x="888.0" y="282.0"/>
+        <di:waypoint xsi:type="dc:Point" x="938.0" y="282.0"/>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
