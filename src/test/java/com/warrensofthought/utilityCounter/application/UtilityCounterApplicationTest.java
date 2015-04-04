@@ -26,7 +26,7 @@ public class UtilityCounterApplicationTest {
         // And it should be the only instance
         assertThat(processInstanceQuery().count()).isEqualTo(1);
         // And there should exist just a single task within that process instance
-        assertThat(task(processInstance)).isNotNull();
+        assertThat(task(processInstance)).hasName("Wait\nfor\nPicture");
 
         // When we complete that task
         complete(task(processInstance));
